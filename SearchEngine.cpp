@@ -21,11 +21,13 @@ void write_car_to_output(std::ofstream& out, const Car& car) {
     write_str(out, car.adress); out << "\n";
 }
 
-void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_file, const char* output_file) {
-    std::ofstream proto(protocol_file);
+// Принимаем уже открытый поток proto по ссылке
+void find(Car_List* head, const SearchCriteria& criteria, std::ofstream& proto, const char* output_file) {
     std::ofstream out(output_file);
-
-    if (!proto.is_open() || !out.is_open()) return;
+    if (!out.is_open()) {
+        proto << "Ошибка открытия выходного файла: " << output_file << "\n";
+        return;
+    }
 
     write_protocol_header(proto, criteria);
 
@@ -36,16 +38,18 @@ void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_f
 
     while (current != nullptr) {
         checked_count++;
-        proto << "= Машина " << car_index++ << " =\nДанные: ";
+        proto << "========================================\n";
+        proto << "АНАЛИЗ ОБЪЕКТА № " << car_index++ << "\n";
+        proto << "========================================\n";
+        proto << "Данные из БД: ";
         write_str_inline(proto, current->C.num); proto << " ";
         write_str_inline(proto, current->C.mark); proto << " ";
         proto << current->C.year << " ";
         write_str_inline(proto, current->C.color); proto << "\n";
+        proto << "----------------------------------------\n";
 
         bool match = true;
 
-        // Порядок приоритета: num -> mark -> year -> color -> fio -> adress
-        // На концах строк теперь выводятся '+' и '-' вместо чекбоксов
         if (criteria.num) {
             bool res = are_strings_equal(current->C.num, criteria.num);
             proto << "Проверка госномера: "; write_str_inline(proto, current->C.num);
@@ -99,7 +103,8 @@ void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_f
         current = current->next;
     }
 
-    proto << "ИТОГО: проверено " << checked_count << " машины, найдено " << found_count << "\n";
-    proto.close();
+    proto << "----------------------------------------\n";
+    proto << "ИТОГО: проверено " << checked_count << ", найдено " << found_count << "\n";
+
     out.close();
 }
