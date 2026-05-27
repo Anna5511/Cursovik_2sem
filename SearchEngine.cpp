@@ -19,6 +19,7 @@ void write_car_to_output(std::ofstream& out, const Car& car) {
     write_str(out, car.color); out << "\n";
     write_str(out, car.fio); out << "\n";
     write_str(out, car.adress); out << "\n";
+    out << "\n";  // Добавляем пустую строку между записями в output.txt
 }
 
 void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_file, const char* output_file) {
@@ -34,9 +35,9 @@ void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_f
     int found_count = 0;
     int car_index = 1;
 
-    // Цикл идет по всей цепочке машин до самого конца (пока не встретит nullptr)
     while (current != nullptr) {
         checked_count++;
+
         proto << "= Машина " << car_index++ << " =\nДанные: ";
         write_str_inline(proto, current->C.num); proto << " ";
         write_str_inline(proto, current->C.mark); proto << " ";
@@ -90,17 +91,17 @@ void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_f
         if (match) {
             proto << "МАШИНА ПОДХОДИТ <<<\n\n";
             found_count++;
-            write_car_to_output(out, current->C); // Записываем очередную найденную машину в файл результатов
+            write_car_to_output(out, current->C);
         }
         else {
             proto << "МАШИНА НЕ ПОДХОДИТ <<<\n\n";
         }
 
-        // ВАЖНО: Строго переходим к следующему элементу списка, не выходя из функции!
+        // КЛЮЧЕВОЙ МОМЕНТ: переход к следующему элементу списка
         current = current->next;
     }
 
-    proto << "ИТОГО: проверено " << checked_count << " машины, найдено " << found_count << "\n";
+    proto << "ИТОГО: проверено " << checked_count << " машин, найдено " << found_count << "\n";
     proto.close();
     out.close();
 }
