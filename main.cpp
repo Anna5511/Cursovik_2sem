@@ -9,9 +9,7 @@
 int main() {
     setlocale(LC_ALL, "Russian");
     system("chcp 1251 > nul");
-    
 
-    // ИСПРАВЛЕНО: Заменили \n на std::endl, чтобы Windows не склеивала твою справку в одну строку
     std::cout << "==================================================" << std::endl;
     std::cout << "СПРАВКА: Допустимые ключи для поиска в query.txt:" << std::endl;
     std::cout << "==================================================" << std::endl;
@@ -34,49 +32,57 @@ int main() {
     std::cout << "adress=г.Москва" << std::endl;
     std::cout << "==================================================" << std::endl << std::endl;
 
-
     const char* inf = "C:\\Users\\Анечка\\Documents\\Cursovik\\input.txt";
     const char* quef = "C:\\Users\\Анечка\\Documents\\Cursovik\\query.txt";
     const char* outf = "C:\\Users\\Анечка\\Documents\\Cursovik\\output.txt";
     const char* prof = "C:\\Users\\Анечка\\Documents\\Cursovik\\protocol.txt";
 
-    std::ofstream prot(prof);
+    // ОТКРЫВАЕМ ПРОТОКОЛ ОДИН РАЗ
+    std::ofstream prot(prof, std::ios::app);
     if (!prot.is_open()) {
         std::cout << "Не удалось открыть файл протокола: " << prof << std::endl;
         return 0;
     }
 
+    prot << "========== НОВЫЙ ЗАПУСК ПРОГРАММЫ ==========" << std::endl;
     prot << "Инициализация структур данных..." << std::endl;
+
     Car_List* db_head = nullptr;
     SearchCriteria current_request;
 
     prot << "Запуск парсинга базы данных из input.txt..." << std::endl;
-    db_head = parse_input_file(inf);
+    db_head = parse_input_file(inf, prot);
 
     if (db_head == nullptr) {
         std::cout << "Файл поврежден/отсутствует." << std::endl;
+        prot << "Файл поврежден/отсутствует." << std::endl;
         prot.close();
         return 0;
     }
 
-    prot << "Запуск  файла запроса query.txt..." << std::endl;
+    // ОТЛАДКА: подсчёт загруженных машин
+    int car_count = 0;
+    Car_List* temp = db_head;
+    while (temp != nullptr) {
+        car_count++;
+        temp = temp->next;
+    }
+    prot << "Загружено машин в список: " << car_count << std::endl;
+    std::cout << "Загружено машин: " << car_count << std::endl;
+
+    prot << "Запуск файла запроса query.txt..." << std::endl;
     if (parse_query_file(quef, current_request)) {
-
         prot << "Поиск запущен." << std::endl;
+        prot.close(); // Закрываем перед вызовом find (там откроется снова)
 
-        // Закрываем дескриптор, чтобы функция find могла открыть этот же файл внутри себя
-        prot.close();
-
-        // Передаем строки путей, как изначально требовала твоя программа
         find(db_head, current_request, prof, outf);
-
     }
     else {
         prot << "Запрос не может быть обработан (ошибка файла query.txt)." << std::endl;
         prot.close();
     }
 
-    // Записываем финальные логи в конец протокола
+    // Записываем финальные логи
     std::ofstream prot_end(prof, std::ios::app);
     if (prot_end.is_open()) {
         prot_end << "Освобождение выделенной динамической памяти..." << std::endl;

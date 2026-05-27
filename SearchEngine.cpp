@@ -19,11 +19,11 @@ void write_car_to_output(std::ofstream& out, const Car& car) {
     write_str(out, car.color); out << "\n";
     write_str(out, car.fio); out << "\n";
     write_str(out, car.adress); out << "\n";
-    out << "\n";  // Добавляем пустую строку между записями в output.txt
+    out << "\n"; // Разделитель между записями
 }
 
 void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_file, const char* output_file) {
-    std::ofstream proto(protocol_file);
+    std::ofstream proto(protocol_file, std::ios::app);
     std::ofstream out(output_file);
 
     if (!proto.is_open() || !out.is_open()) return;
@@ -97,7 +97,6 @@ void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_f
             proto << "МАШИНА НЕ ПОДХОДИТ <<<\n\n";
         }
 
-        // КЛЮЧЕВОЙ МОМЕНТ: переход к следующему элементу списка
         current = current->next;
     }
 

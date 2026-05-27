@@ -3,26 +3,30 @@
 #include "FileIO.h"
 #include "Memory.h"
 
-bool parse_single_car(std::ifstream& file, Car& car, int block_number) {
+bool parse_single_car(std::ifstream& file, Car& car, int block_number, std::ofstream& prot) {
     init_car(car);
     bool is_empty = false;
     bool success = true;
-
-    std::ofstream prot("C:\\Users\\Анечка\\Documents\\Cursovik\\protocol.txt");
 
     // Последовательно читаем параметры
     if (!read_data(file, car.num, is_empty) || is_empty) {
         free_car(car);
         return false; // Конец файла или пустая строка перед блоком
     }
-    if (success && (!read_data(file, car.mark, is_empty) || is_empty)) success = false;
-    if (success && (!read_int(file, car.year, is_empty) || is_empty)) success = false;
-    if (success && (!read_data(file, car.color, is_empty) || is_empty)) success = false;
-    if (success && (!read_data(file, car.fio, is_empty) || is_empty)) success = false;
-    if (success && (!read_data(file, car.adress, is_empty) || is_empty)) success = false;
+
+    if (!read_data(file, car.mark, is_empty) || is_empty) success = false;
+    if (!read_int(file, car.year, is_empty) || is_empty) success = false;
+    if (!read_data(file, car.color, is_empty) || is_empty) success = false;
+    if (!read_data(file, car.fio, is_empty) || is_empty) success = false;
+
+    // adress - необязательное поле
+    if (!read_data(file, car.adress, is_empty) || is_empty) {
+        if (car.adress == nullptr) {
+            car.adress = create_empty_str();
+        }
+    }
 
     if (!success) {
-        //Вывод номера пропущенного блока
         prot << "Неправильный формат ввода информации о машине. Блок "
             << block_number << " пропущен." << std::endl;
 
@@ -36,32 +40,28 @@ bool parse_single_car(std::ifstream& file, Car& car, int block_number) {
         }
         free_str(trash);
     }
-    prot.close();
     return success;
 }
 
-Car_List* parse_input_file(const char* filename) {
-
-    std::ofstream prot("C:\\Users\\Анечка\\Documents\\Cursovik\\protocol.txt");
-
+Car_List* parse_input_file(const char* filename, std::ofstream& prot) {
     if (!check_file_exists(filename)) {
         prot << "Входной файл не найден: " << filename << std::endl;
-        prot.close();
         return nullptr;
     }
+
     std::ifstream file(filename);
     Car_List* head = nullptr;
     Car_List* tail = nullptr;
 
-    int current_block = 0; // Счетчик абсолютно всех блоков в файле
+    int current_block = 0;
 
     while (!file.eof()) {
         if (file.peek() == EOF) break;
 
-        current_block++; // Входим в чтение нового блока данных
+        current_block++;
         Car temporary_car;
 
-        if (parse_single_car(file, temporary_car, current_block)) {
+        if (parse_single_car(file, temporary_car, current_block, prot)) {
             Car_List* new_node = new Car_List;
             new_node->C = temporary_car;
             new_node->next = nullptr;
@@ -77,7 +77,5 @@ Car_List* parse_input_file(const char* filename) {
         }
     }
     file.close();
-    prot.close();
-    
     return head;
 }

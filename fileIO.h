@@ -7,7 +7,7 @@
 // Проверка возможности открытия файла на чтение
 bool check_file_exists(const char* filename);
 
-// Переименованные функции чтения
+// Функции чтения
 bool read_data(std::ifstream& file, str*& dynamic_str, bool& is_empty);
 bool read_int(std::ifstream& file, int& value, bool& is_empty);
 
