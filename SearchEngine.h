@@ -7,7 +7,7 @@
 void write_protocol_header(std::ofstream& proto, const SearchCriteria& criteria);
 void write_car_to_output(std::ofstream& out, const Car& car);
 
-// Сигнатура строго под оригинальный вызов из main.cpp
+// Принимает пути к файлам в виде строк, строго по исходной архитектуре проекта
 void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_file, const char* output_file);
 
 #endif

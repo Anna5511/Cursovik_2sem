@@ -34,6 +34,7 @@ void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_f
     int found_count = 0;
     int car_index = 1;
 
+    // Цикл идет по всей цепочке машин до самого конца (пока не встретит nullptr)
     while (current != nullptr) {
         checked_count++;
         proto << "= Машина " << car_index++ << " =\nДанные: ";
@@ -89,11 +90,13 @@ void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_f
         if (match) {
             proto << "МАШИНА ПОДХОДИТ <<<\n\n";
             found_count++;
-            write_car_to_output(out, current->C);
+            write_car_to_output(out, current->C); // Записываем очередную найденную машину в файл результатов
         }
         else {
             proto << "МАШИНА НЕ ПОДХОДИТ <<<\n\n";
         }
+
+        // ВАЖНО: Строго переходим к следующему элементу списка, не выходя из функции!
         current = current->next;
     }
 
