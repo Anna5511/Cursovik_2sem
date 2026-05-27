@@ -21,13 +21,11 @@ void write_car_to_output(std::ofstream& out, const Car& car) {
     write_str(out, car.adress); out << "\n";
 }
 
-// Принимаем уже открытый поток proto по ссылке
-void find(Car_List* head, const SearchCriteria& criteria, std::ofstream& proto, const char* output_file) {
+void find(Car_List* head, const SearchCriteria& criteria, const char* protocol_file, const char* output_file) {
+    std::ofstream proto(protocol_file);
     std::ofstream out(output_file);
-    if (!out.is_open()) {
-        proto << "Ошибка открытия выходного файла: " << output_file << "\n";
-        return;
-    }
+
+    if (!proto.is_open() || !out.is_open()) return;
 
     write_protocol_header(proto, criteria);
 
@@ -38,15 +36,11 @@ void find(Car_List* head, const SearchCriteria& criteria, std::ofstream& proto, 
 
     while (current != nullptr) {
         checked_count++;
-        proto << "========================================\n";
-        proto << "АНАЛИЗ ОБЪЕКТА № " << car_index++ << "\n";
-        proto << "========================================\n";
-        proto << "Данные из БД: ";
+        proto << "= Машина " << car_index++ << " =\nДанные: ";
         write_str_inline(proto, current->C.num); proto << " ";
         write_str_inline(proto, current->C.mark); proto << " ";
         proto << current->C.year << " ";
         write_str_inline(proto, current->C.color); proto << "\n";
-        proto << "----------------------------------------\n";
 
         bool match = true;
 
@@ -103,8 +97,7 @@ void find(Car_List* head, const SearchCriteria& criteria, std::ofstream& proto, 
         current = current->next;
     }
 
-    proto << "----------------------------------------\n";
-    proto << "ИТОГО: проверено " << checked_count << ", найдено " << found_count << "\n";
-
+    proto << "ИТОГО: проверено " << checked_count << " машины, найдено " << found_count << "\n";
+    proto.close();
     out.close();
 }

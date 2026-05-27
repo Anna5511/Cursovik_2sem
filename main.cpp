@@ -1,5 +1,5 @@
 #include <iostream>
-#include <fstream> // ИСПРАВЛЕНО: Добавлено для работы std::ofstream и устранения ошибок C2079/C2297
+#include <fstream>
 #include <clocale>
 #include "CarParser.h"
 #include "QueryParser.h"
@@ -7,9 +7,11 @@
 #include "Memory.h"
 
 int main() {
-    std::setlocale(LC_ALL, ".UTF-8");
+    setlocale(LC_ALL, "Russian");
+    system("chcp 1251 > nul");
+    
 
-    // ИСПРАВЛЕНО: Заменили \n на std::endl, чтобы консоль не склеивала твои строки в кашу
+    // ИСПРАВЛЕНО: Заменили \n на std::endl, чтобы Windows не склеивала твою справку в одну строку
     std::cout << "==================================================" << std::endl;
     std::cout << "СПРАВКА: Допустимые ключи для поиска в query.txt:" << std::endl;
     std::cout << "==================================================" << std::endl;
@@ -20,6 +22,10 @@ int main() {
     std::cout << "ФИО владельца:" << std::endl;
     std::cout << "Адрес регистрации :" << std::endl;
     std::cout << "==================================================" << std::endl;
+    std::cout << "num= , mark= , year= , color= , fio= , adress=" << std::endl;
+    std::cout << "==================================================" << std::endl;
+    std::cout << "Пример данных:" << std::endl;
+    std::cout << std::endl;
     std::cout << "num=A123BE" << std::endl;
     std::cout << "mark=Toyota" << std::endl;
     std::cout << "year=2015" << std::endl;
@@ -27,6 +33,7 @@ int main() {
     std::cout << "fio=Иванов Иван Иванович" << std::endl;
     std::cout << "adress=г.Москва" << std::endl;
     std::cout << "==================================================" << std::endl << std::endl;
+
 
     const char* inf = "C:\\Users\\Анечка\\Documents\\Cursovik\\input.txt";
     const char* quef = "C:\\Users\\Анечка\\Documents\\Cursovik\\query.txt";
@@ -48,7 +55,7 @@ int main() {
 
     if (db_head == nullptr) {
         std::cout << "Файл поврежден/отсутствует." << std::endl;
-        prot.close(); // Не забываем закрыть файл перед выходом
+        prot.close();
         return 0;
     }
 
@@ -57,19 +64,28 @@ int main() {
 
         prot << "Поиск запущен." << std::endl;
 
-        // Передаем строку пути prof, как и было заложено в твоем проекте
+        // Закрываем поток перед поиском, чтобы внутри find() файл протокола открылся без конфликтов
+        prot.close();
+
+        // Передаем строки путей, строго по твоей архитектуре
         find(db_head, current_request, prof, outf);
 
     }
     else {
         prot << "Запрос не может быть обработан (ошибка файла query.txt)." << std::endl;
+        prot.close();
     }
 
-    prot << "Освобождение выделенной динамической памяти..." << std::endl;
+    // Дописываем финальные системные строчки в протокол
+    std::ofstream prot_end(prof, std::ios::app);
+    if (prot_end.is_open()) {
+        prot_end << "Освобождение выделенной динамической памяти..." << std::endl;
+        prot_end << "Программа успешно завершила работу." << std::endl;
+        prot_end.close();
+    }
+
     free_criteria(current_request);
     free_car_list(db_head);
 
-    prot << "Программа успешно завершила работу." << std::endl;
-    prot.close();
     return 0;
 }

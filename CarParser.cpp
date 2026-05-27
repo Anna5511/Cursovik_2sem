@@ -8,6 +8,8 @@ bool parse_single_car(std::ifstream& file, Car& car, int block_number) {
     bool is_empty = false;
     bool success = true;
 
+    std::ofstream prot("C:\\Users\\Анечка\\Documents\\Cursovik\\protocol.txt");
+
     // Последовательно читаем параметры
     if (!read_data(file, car.num, is_empty) || is_empty) {
         free_car(car);
@@ -21,7 +23,7 @@ bool parse_single_car(std::ifstream& file, Car& car, int block_number) {
 
     if (!success) {
         //Вывод номера пропущенного блока
-        std::cout << "[Ошибка] Неправильный формат ввода информации о машине. Блок "
+        prot << "Неправильный формат ввода информации о машине. Блок "
             << block_number << " пропущен." << std::endl;
 
         free_car(car);
@@ -34,12 +36,17 @@ bool parse_single_car(std::ifstream& file, Car& car, int block_number) {
         }
         free_str(trash);
     }
+    prot.close();
     return success;
 }
 
 Car_List* parse_input_file(const char* filename) {
+
+    std::ofstream prot("C:\\Users\\Анечка\\Documents\\Cursovik\\protocol.txt");
+
     if (!check_file_exists(filename)) {
-        std::cout << "[Ошибка] Входной файл не найден: " << filename << std::endl;
+        prot << "Входной файл не найден: " << filename << std::endl;
+        prot.close();
         return nullptr;
     }
     std::ifstream file(filename);
@@ -70,5 +77,7 @@ Car_List* parse_input_file(const char* filename) {
         }
     }
     file.close();
+    prot.close();
+    
     return head;
 }
