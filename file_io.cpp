@@ -23,7 +23,9 @@ int read_input(const char* filename,
     UniqueStrNode** color_head,
     UniqueStrNode** fio_head,
     UniqueStrNode** addr_head,
-    std::ofstream& log)
+    std::ofstream& log,
+    int& correct_blocks,
+    int& incorrect_blocks)
 {
     std::ifstream file(filename);
     if (!file.is_open()) {
@@ -33,6 +35,8 @@ int read_input(const char* filename,
 
     int block_num = 1;
     int total_blocks = 0;
+    correct_blocks = 0;
+    incorrect_blocks = 0;
     const int REQUIRED_LINES = 6;
 
     while (!file.eof()) {
@@ -98,6 +102,7 @@ int read_input(const char* filename,
 
         if (valid) {
             log << "---------------- Блок информации корректен" << std::endl;
+            correct_blocks++;
             UniqueStrNode* mark_node = add_str_node_from_str(mark_head, lines[1]);
             UniqueIntNode* year_node = add_int_node(year_head, year_val);
             UniqueStrNode* color_node = add_str_node_from_str(color_head, lines[3]);
@@ -108,6 +113,7 @@ int read_input(const char* filename,
         }
         else {
             log << "---------------- Блок информации некорректен" << std::endl;
+            incorrect_blocks++;
             for (int i = 0; i < line_count && i < REQUIRED_LINES; ++i)
                 str_free(lines[i]);
         }

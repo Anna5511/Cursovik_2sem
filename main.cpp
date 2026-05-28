@@ -8,14 +8,19 @@
 #include "match_parser.h"
 
 int main() {
-
     const char* inf = "C:\\Users\\Анечка\\Documents\\Cursovik\\input.txt";
     const char* match = "C:\\Users\\Анечка\\Documents\\Cursovik\\match.txt";
     const char* outf = "C:\\Users\\Анечка\\Documents\\Cursovik\\output.txt";
     const char* logf = "C:\\Users\\Анечка\\Documents\\Cursovik\\protocol.txt";
 
-    SetConsoleOutputCP(CP_UTF8);
+    
     SetConsoleCP(CP_UTF8);
+    SetConsoleOutputCP(CP_UTF8);
+
+    std::cout << "==================================================" << std::endl;
+    std::cout << "match.txt:" << std::endl;
+    std::cout << "num= , mark= , year= , color= , fio= , adress=" << std::endl;
+    std::cout << "==================================================" << std::endl;
 
     std::ofstream log(logf, std::ios::trunc);
     if (!log.is_open()) {
@@ -32,9 +37,19 @@ int main() {
 
     log << "СПИСОК МАШИН" << std::endl;
     log << "====================" << std::endl;
-    read_input(inf, &car_head,
+
+    int correct_blocks = 0;
+    int incorrect_blocks = 0;
+    int total_blocks = read_input(inf, &car_head,
         &mark_head, &year_head, &color_head,
-        &fio_head, &addr_head, log);
+        &fio_head, &addr_head, log,
+        correct_blocks, incorrect_blocks);
+
+    log << "====================" << std::endl;
+    log << "СТАТИСТИКА ЧТЕНИЯ:" << std::endl;
+    log << "  Всего блоков (машин): " << total_blocks << std::endl;
+    log << "  Корректных блоков: " << correct_blocks << std::endl;
+    log << "  Некорректных блоков: " << incorrect_blocks << std::endl;
     log << "====================" << std::endl;
 
     SearchCriteria crit = {};
