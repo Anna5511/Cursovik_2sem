@@ -18,6 +18,25 @@
       <Platform>x64</Platform>
     </ProjectConfiguration>
   </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="car.h" />
+    <ClInclude Include="file_io.h" />
+    <ClInclude Include="find.h" />
+    <ClInclude Include="match_parser.h" />
+    <ClInclude Include="str.h" />
+    <ClInclude Include="str_io.h" />
+    <ClInclude Include="unique_lists.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="car.cpp" />
+    <ClCompile Include="file_io.cpp" />
+    <ClCompile Include="find.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="match_parser.cpp" />
+    <ClCompile Include="str.cpp" />
+    <ClCompile Include="str_io.cpp" />
+    <ClCompile Include="unique_lists.cpp" />
+  </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>17.0</VCProjectVersion>
     <Keyword>Win32Proj</Keyword>
@@ -122,22 +141,6 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
     </Link>
   </ItemDefinitionGroup>
-  <ItemGroup>
-    <ClInclude Include="CarParser.h" />
-    <ClInclude Include="fileIO.h" />
-    <ClInclude Include="memory.h" />
-    <ClInclude Include="QueryParser.h" />
-    <ClInclude Include="SearchEngine.h" />
-    <ClInclude Include="types.h" />
-  </ItemGroup>
-  <ItemGroup>
-    <ClCompile Include="CarParser.cpp" />
-    <ClCompile Include="fileIO.cpp" />
-    <ClCompile Include="main.cpp" />
-    <ClCompile Include="memory.cpp" />
-    <ClCompile Include="QueryParser.cpp" />
-    <ClCompile Include="SearchEngine.cpp" />
-  </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">
   </ImportGroup>
