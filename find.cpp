@@ -107,13 +107,13 @@ void find_cars(Car_List* head, const SearchCriteria& crit,
         }
 
         if (match) {
-            log << "  >>> люьхмю ондундхр <<<" << std::endl;
+            log << "----------------------люьхмю ондундхр--------------------------------" << std::endl;
             ++found;
             print_car(out, &cur->car);
             out << std::endl << std::endl;
         }
         else {
-            log << "  >>> люьхмю ме ондундхр <<<" << std::endl;
+            log << "---------люьхмю ме ондундхр" << std::endl;
         }
 
         cur = cur->next;
